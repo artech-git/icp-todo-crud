@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/rust_crud_app_backend"
+]
+resolver = "2"
