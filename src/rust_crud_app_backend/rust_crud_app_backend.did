@@ -1,3 +1,8 @@
+type TodoUnit = record { uid : text; todo_text : text; start_time : nat64 };
 service : {
-    "greet": (text) -> (text) query;
+  delete_todo : (text) -> (bool);
+  generate_new_todo : (text) -> (text);
+  read_pagination : (nat64, nat64) -> (vec TodoUnit) query;
+  read_todo : (text) -> (text) query;
+  update_todo : (text, text) -> (bool);
 }
