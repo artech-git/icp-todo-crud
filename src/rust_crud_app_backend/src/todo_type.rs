@@ -16,19 +16,21 @@ pub struct TodoUnit {
     pub start_time: u64, // unix time format
 }
 
+const MAX_VALUE_SIZE: u32 = 100;
+
 impl Storable for TodoUnit {
-    const BOUND: Bound = Bound::Unbounded;
+    const BOUND: Bound = Bound::Bounded {
+        max_size: MAX_VALUE_SIZE,
+        is_fixed_size: false,
+    };
 
     fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
-        // std::borrow::Cow::Owned(bincode::serialize(self).expect("Failed to serialize TodoUnit"))
-        let encoded_bytes = Encode!(self).unwrap();
+        let encoded_bytes = Encode!(self).unwrap_or(vec![]);
         std::borrow::Cow::Owned(encoded_bytes)
     }
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
-        // bincode::deserialize(&bytes).expect("Failed to deserialize TodoUnit")
+        // Is this naked unwrap safe or not! 🤔
         Decode!(&bytes, TodoUnit).unwrap()
     }
 }
-
-// ic_cdk::export_candid!();
