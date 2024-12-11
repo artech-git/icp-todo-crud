@@ -1,10 +1,41 @@
 # `rust_crud_app`
 
-Welcome to your new `rust_crud_app` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.
+A basic crud application built using `ic_cdk` and `rust`, following assumption were made
 
-To get started, you might want to explore the project directory structure and the default configuration file. Working with this project in your development environment will not affect any production deployment or identity tokens.
+- Max memory consumption
+- Pagination through vector
+- Fixed size of ID and TodoText
+- Persistent storage for TodoType
 
-To learn more before you start working with `rust_crud_app`, see the following documentation available online:
+Further actionable considerations: 
+- Can we cap out on maximum memory threshold
+- should we periodically drian the Pagination cache if canister is low on memory 
+- If time goes beyond a period should we drop task 
+
+---
+
+Based upon previous considered following routes are devised for communications
+
+For generating a fresh todo from scratch, pass the text data and returns a 32 character long string
+- generate_new_todo():  	String -> UID
+
+For reading a todo through ID, Insert the 32 characters sized uid and retreive todo info
+- read_todo(): 			      UID -> String
+
+For Reading a entire todo through ID, Returns entire todo information
+- read_complete_todo():   UID -> TodoUnit
+
+For reading multiple todo through pagination, for retreiving a todo list through you have to use following methodology ( pagination_size * ( page_no) ) which will our start and (pagination_size * page_no) which will be our end, this will return us all those todo which are ordered by the time of creation 
+- return_todo_paginated(): 	(u32..u32)(pagination_size to page_no) -> Vec<Todo>
+
+For updating a existing todo, you need to pass existing UID and updated todo text, on succesfull update it will return true otherwise will generate a new todo from scratch and return false
+- update_todo(): 		        (UID, String) -> bool
+
+
+For removing/deleting a todo, returns true if removal was succesfull otherwise false 
+- delete_todo(): 			      (UID) -> bool
+
+---
 
 - [Quick Start](https://internetcomputer.org/docs/current/developer-docs/setup/deploy-locally)
 - [SDK Developer Tools](https://internetcomputer.org/docs/current/developer-docs/setup/install)
